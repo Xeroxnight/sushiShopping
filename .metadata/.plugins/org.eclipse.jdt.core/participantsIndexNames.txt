@@ -1,3 +1,0 @@
-INDEX VERSION 1.134
-/autofs/unitytravail/travail/tjuliard/web/projet/.metadata/.plugins/org.eclipse.jst.jsp.core/jspsearch/3329583985.index
-/AdminPage/src/main/java

@@ -1,3 +1,0 @@
-INDEX VERSION 1.4+/autofs/unitytravail/travail/tjuliard/web/projet/.metadata/.plugins/org.eclipse.wst.jsdt.core/indexes
-3060856247.index
-694437533.index
