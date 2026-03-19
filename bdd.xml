@@ -1,1 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<java version="21.0.10" class="java.beans.XMLDecoder">
+ <object class="metier.GlobalCLass" id="GlobalCLass0">
+  <void property="catalogue">
+   <void method="put">
+    <int>6544</int>
+    <object class="metier.Sushi">
+     <void property="id">
+      <int>6544</int>
+     </void>
+     <void property="nom">
+      <string>samas</string>
+     </void>
+     <void property="prix">
+      <double>2.0</double>
+     </void>
+    </object>
+   </void>
+   <void method="put">
+    <int>1</int>
+    <object class="metier.Sushi">
+     <void property="id">
+      <int>1</int>
+     </void>
+     <void property="nom">
+      <string>Saumon</string>
+     </void>
+     <void property="prix">
+      <double>5.5</double>
+     </void>
+    </object>
+   </void>
+   <void method="put">
+    <int>65</int>
+    <object class="metier.Sushi">
+     <void property="id">
+      <int>65</int>
+     </void>
+     <void property="nom">
+      <string>salamo</string>
+     </void>
+     <void property="prix">
+      <double>1.0</double>
+     </void>
+    </object>
+   </void>
+   <void method="put">
+    <int>2</int>
+    <object class="metier.Sushi">
+     <void property="id">
+      <int>2</int>
+     </void>
+     <void property="nom">
+      <string>sigma</string>
+     </void>
+     <void property="prix">
+      <double>25.0</double>
+     </void>
+    </object>
+   </void>
+   <void method="put">
+    <int>3</int>
+    <object class="metier.Sushi">
+     <void property="id">
+      <int>3</int>
+     </void>
+     <void property="nom">
+      <string>sigma</string>
+     </void>
+     <void property="prix">
+      <double>10.0</double>
+     </void>
+    </object>
+   </void>
+  </void>
+ </object>
+</java>
