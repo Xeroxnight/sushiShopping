@@ -19,9 +19,9 @@ public class TesteSerialisation
 		global.getCatalogue().put(s.getId(), s);
 		global.getCatalogue().put(b.getId(), b);
 
-		XMLStorage.encoder(global, "../catalogue.xml");
+		XMLStorage.encoder(global, "../bdd.xml");
 
-		GlobalCLass loaded = XMLStorage.decoder("../catalogue.xml");
+		GlobalCLass loaded = XMLStorage.decoder("../bdd.xml");
 
 		System.out.println("Nb produits chargés : " + loaded.getCatalogue().size());
 	}

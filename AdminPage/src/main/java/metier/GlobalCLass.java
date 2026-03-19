@@ -1,6 +1,8 @@
 package metier;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class GlobalCLass {
 
@@ -21,6 +23,16 @@ public class GlobalCLass {
 
     public void setCatalogue(HashMap<Integer, Produit> catalogue) {
         this.catalogue = catalogue;
+    }
+    
+    public List<Sushi> getSushis() {
+        List<Sushi> res = new ArrayList<>();
+        for (Produit p : catalogue.values()) {
+            if (p instanceof Sushi) {
+                res.add((Sushi) p);
+            }
+        }
+        return res;
     }
     
     public GlobalCLass() {}
