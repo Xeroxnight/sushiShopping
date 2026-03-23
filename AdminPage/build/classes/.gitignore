@@ -3,3 +3,6 @@
 /CatalogueSUshi.class
 /CatalogueSushi.class
 /CreateSushiServlet.class
+/UpdateSushiServlet.class
+/DeleteSushiServlet.class
+/CreateAndUpdateSushiServlet.class

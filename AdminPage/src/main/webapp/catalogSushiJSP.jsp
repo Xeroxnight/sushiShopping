@@ -71,7 +71,8 @@
         <th>ID</th>
         <th>Nom</th>
         <th>Prix</th>
-        <th>Action</th>
+        <th>Modifier</th>
+        <th>Supprimer</th>
     </tr>
 
 <%
@@ -79,25 +80,33 @@
         for (Sushi s : sushis) {
 %>
 
-<form action="api/sushi/update" method="post">
     <tr>
-        <td>
-            <input type="text" name="id" value="<%= s.getId() %>" readonly />
-        </td>
-
-        <td>
-            <input type="text" name="nom" value="<%= s.getNom() %>" />
-        </td>
-
-        <td>
-            <input type="text" name="prix" value="<%= s.getPrix() %>" />
-        </td>
-
-        <td>
-            <button type="submit">Modifier</button>
-        </td>
+		<form action="CreateAndUpdateSushiServlet" method="post">
+	        <td>
+	            <input type="text" name="id" value="<%= s.getId() %>" readonly />
+	        </td>
+	
+	        <td>
+	            <input type="text" name="nom" value="<%= s.getNom() %>" />
+	        </td>
+	
+	        <td>
+	            <input type="text" name="prix" value="<%= s.getPrix() %>" />
+	        </td>
+	
+	        <td>
+	            <button type="submit">Modifier</button>
+	        </td>
+		</form>
+		<!-- DELETE -->
+		<form action="DeleteSushiServlet" method="post">
+		    <input type="hidden" name="id" value="<%= s.getId() %>" />
+		    <td>
+		        <button type="submit">Supprimer</button>
+		    </td>
+		</form>
     </tr>
-</form>
+
 
 <%
         }
@@ -111,7 +120,7 @@
 <div class="create-box">
     <h2>Créer un Sushi</h2>
 
-    <form action="CreateSushiServlet" method="post">
+    <form action="CreateAndUpdateSushiServlet" method="post">
 
         <label>ID :</label><br>
         <input type="text" name="id"><br><br>

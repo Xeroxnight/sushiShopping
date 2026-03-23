@@ -44,7 +44,7 @@ public class XMLStorage {
 
             data = (GlobalCLass) decoder.readObject();
 
-            System.out.println("Catalogue chargé depuis : " + chemin);
+            //System.out.println("Catalogue chargé depuis : " + chemin);
 
         } catch (Exception e) {
 

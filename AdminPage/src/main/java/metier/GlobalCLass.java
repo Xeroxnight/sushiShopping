@@ -4,6 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import jakarta.inject.Singleton;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+
+@Path("/sushi")
+@Singleton
 public class GlobalCLass {
 
     private HashMap<String, Utilisateur> listUtilisateur = new HashMap<>();
@@ -35,5 +45,44 @@ public class GlobalCLass {
         return res;
     }
     
+    public void updateInCatalog(Sushi s)
+    {
+    	String path = AppConfig.getInstance().getXmlPath();
+    	GlobalCLass glob = XMLStorage.decoder(path);
+        catalogue.put(s.getId(), s);
+        XMLStorage.encoder(glob, path);
+    }
+    
+    @POST
+    @Path("/createAndUpdate")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void putInCatalogRest(Sushi s)
+    {
+    	String path = AppConfig.getInstance().getXmlPath();
+    	GlobalCLass glob = XMLStorage.decoder(path);
+    	glob.getCatalogue().put(s.getId(), s);
+    	XMLStorage.encoder(glob, path);
+    }
+    
+    
+    @POST
+    @Path("/delete")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void deleteInCatalog(Sushi s)
+    {
+    	String path = AppConfig.getInstance().getXmlPath();
+        GlobalCLass global = XMLStorage.decoder(path);
+    	global.getCatalogue().remove(s.getId());
+    	XMLStorage.encoder(global, path);
+    }
+    
     public GlobalCLass() {}
 }
+
+
+
+
+
+
+
+

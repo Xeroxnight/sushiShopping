@@ -15,14 +15,14 @@ import java.io.IOException;
 /**
  * Servlet implementation class CreateSushiServlet
  */
-@WebServlet("/CreateSushiServlet")
-public class CreateSushiServlet extends HttpServlet {
+@WebServlet("/CreateAndUpdateSushiServlet")
+public class CreateAndUpdateSushiServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CreateSushiServlet() {
+    public CreateAndUpdateSushiServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -46,27 +46,13 @@ public class CreateSushiServlet extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("id"));
             String nom = request.getParameter("nom");
             double prix = Double.parseDouble(request.getParameter("prix"));
-
-            // charger XML
-            
-            //String path = "C:\\Users\\timeo\\Desktop\\Nouveau dossier\\bdd.xml";
-            String path = AppConfig.getInstance().getXmlPath();
-            // String path = getServletContext().getRealPath("C:\\Users\\timeo\\Desktop\\Nouveau dossier\\bdd.xml");
-            GlobalCLass global = XMLStorage.decoder(path);
-            // System.out.println("absolute =>"+"C:\\Users\\timeo\\Desktop\\Nouveau dossier\\bdd.xml");
-    		//System.out.println("===+>"+AppConfig.getInstance().getXmlPath());
-
-            // créer sushi
+            GlobalCLass global = new GlobalCLass();
             Sushi s = new Sushi();
             s.setId(id);
             s.setNom(nom);
             s.setPrix(prix);
-
-            // ajouter
-            global.getCatalogue().put(id, s);
-
-            // sauvegarder
-            XMLStorage.encoder(global, path);
+            global.putInCatalogRest(s);
+            
 
         } catch (Exception e) {
             e.printStackTrace();
