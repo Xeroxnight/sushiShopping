@@ -5,37 +5,32 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import metier.AppConfig;
+import metier.GlobalCLass;
+import metier.Utilisateur;
 
 import java.io.IOException;
 
 /**
- * Servlet implementation class mainPage
+ * Servlet implementation class DeleteUtilisateurServlet
  */
-public class MainPage extends HttpServlet {
+@WebServlet("/DeleteUtilisateurServlet")
+public class DeleteUtilisateurServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+       
     /**
-     * Default constructor. 
+     * @see HttpServlet#HttpServlet()
      */
-    public MainPage() {
+    public DeleteUtilisateurServlet() {
+        super();
         // TODO Auto-generated constructor stub
     }
-    
-    
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		System.out.println("salut");
-		/*
-		 * request.setAttribute("liste", gestComm.getListeCommande());                                                
-		 * this.getServletContext().getRequestDispatcher("/WEB-INF/Affiche_liste.jsp" ).include(request, response);
-		 */
 		response.getWriter().append("Served at: ").append(request.getContextPath());
-		
 	}
 
 	/**
@@ -43,18 +38,20 @@ public class MainPage extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		 // Récupérer le nouveau chemin depuis le formulaire
-        String newPath = request.getParameter("xmlPath");
-        newPath =  newPath + "\\bdd.xml";
-        if (newPath != null && !newPath.trim().isEmpty()) {
-            // Modifier le chemin dans AppConfig
-        	AppConfig.setPath(newPath.trim());
-            //AppConfig.setXmlPath(newPath.trim());
-            System.out.println("Chemin XML modifié : " + newPath);
+		try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            
+            Utilisateur utilisateur = new Utilisateur();
+            utilisateur.setId(id);
+            
+            GlobalCLass global = new GlobalCLass();
+            global.deleteUtilisateurInCatalogRest(utilisateur);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        
-        // Rediriger vers la page admin
-        response.sendRedirect("index.jsp");
+
+        response.sendRedirect("CatalogueUtilisateur");
 	}
 
 }

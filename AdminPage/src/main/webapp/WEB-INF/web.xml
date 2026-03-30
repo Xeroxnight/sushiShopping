@@ -37,6 +37,12 @@
     <url-pattern>/rest/*</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>InitServlet</servlet-name>
+    <servlet-class>InitServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+   </servlet>
+  
   <display-name>AdminPage</display-name>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>

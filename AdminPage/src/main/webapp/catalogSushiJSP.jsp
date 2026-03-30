@@ -63,7 +63,11 @@
 </head>
 
 <body>
-
+<form action="/AdminPage" method="get">
+    <button class="btn" type="submit">
+        Home
+    </button>
+</form>
 <h1>Gestion des Sushis</h1>
 
 <table>

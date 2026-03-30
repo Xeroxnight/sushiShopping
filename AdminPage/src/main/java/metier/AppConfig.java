@@ -1,58 +1,70 @@
 package metier;
 
 import java.io.*;
+import jakarta.inject.Singleton;
+import jakarta.ws.rs.Path;
 
+@Path("/api")
+@Singleton
 public class AppConfig implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static AppConfig instance;
-
+    
     private String xmlPath;
+    //private static final String CONFIG_FILE = "WEB-INF\\appConfig.xml";
+    //private static final String CONFIG_FILE = "WEB-INF" + File.separator + "appConfig.xml";
 
-    // private static final String CONFIG_FILE = "C:\\Users\\timeo\\Desktop\\Nouveau dossier\\appConfig.ser";
-    private static final String CONFIG_FILE = "WEB-INF/appConfig.ser";
-
-    // constructeur privé
-    private AppConfig() {
-        // valeur par défaut si fichier pas trouvé
-        xmlPath = "C:\\Users\\timeo\\Desktop\\Nouveau dossier\\bdd.xml";
+    // Constructeur public vide OBLIGATOIRE pour XMLDecoder
+    public AppConfig() {
+        // Valeur par défaut
+        this.xmlPath = "C:\\Users\\timeo\\Desktop\\Nouveau dossier\\bdd.xml";
     }
-
-    // instance unique
-    public static AppConfig getInstance() {
-        if (instance == null) {
-            // essayer de charger depuis fichier
-            File f = new File(CONFIG_FILE);
-            if (f.exists()) {
-                try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f))) {
-                    instance = (AppConfig) ois.readObject();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    instance = new AppConfig();
-                }
-            } else {
-                instance = new AppConfig();
-            }
-        }
-        return instance;
-    }
-
-    // getter / setter
+    
+    // Getter obligatoire pour XMLEncoder
     public String getXmlPath() {
-        return xmlPath;
+        return this.xmlPath;
     }
-
-    public void setXmlPath(String xmlPath) {
-        this.xmlPath = xmlPath;
-        save(); // sauvegarde automatiquement
+    
+    // Setter obligatoire pour XMLEncoder
+    public void setXmlPath(String path) {
+        this.xmlPath = path;
     }
-
-    // méthode de persistance
-    private void save() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(CONFIG_FILE))) {
-            oos.writeObject(this);
-        } catch (IOException e) {
-            e.printStackTrace();
+    
+    public static void setPath(String path) {
+        AppConfig configFile = XMLStorage.decoderConfigFile(CONFIG_FILE);
+        if (configFile == null) {
+            configFile = new AppConfig();
         }
+        configFile.setXmlPath(path);
+        XMLStorage.encoderConfigFile(configFile, CONFIG_FILE);
     }
+    
+    public static String getPath() {
+        AppConfig configFile = XMLStorage.decoderConfigFile(CONFIG_FILE);
+        if (configFile == null) {
+            configFile = new AppConfig();
+        }
+        return configFile.getXmlPath();
+    }
+    
+    
+    private static String getConfigFilePath() {
+        String path = AppConfig.class.getProtectionDomain()
+                        .getCodeSource()
+                        .getLocation()
+                        .getPath();
+        try {
+            path = java.net.URLDecoder.decode(path, "UTF-8");
+        } catch (Exception e) {}
+        
+        File f = new File(path);
+        // Remonter de classes/ vers WEB-INF
+        if (f.getName().equals("classes")) {
+            f = f.getParentFile();
+        }
+        
+        return f.getAbsolutePath() + File.separator + "appConfig.xml";
+    }
+
+    private static final String CONFIG_FILE = getConfigFilePath();
 }

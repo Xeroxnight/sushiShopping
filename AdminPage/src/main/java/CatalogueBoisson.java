@@ -8,23 +8,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import metier.AppConfig;
 import metier.GlobalCLass;
-import metier.Sushi;
 import metier.XMLStorage;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
- * Servlet implementation class Catalogue
+ * Servlet implementation class CatalogueBoisson
  */
-@WebServlet("/CatalogueSushi")
-public class CatalogueSushi extends HttpServlet {
+@WebServlet("/CatalogueBoisson")
+public class CatalogueBoisson extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CatalogueSushi() {
+    public CatalogueBoisson() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -36,27 +34,15 @@ public class CatalogueSushi extends HttpServlet {
 		// TODO Auto-generated method stub
 		String path = AppConfig.getPath();
 		GlobalCLass loaded = XMLStorage.decoder(path);
-	    // récupérer les sushis
 		if(loaded == null)
 		{
 			//loaded = new GlobalCLass();
 			response.sendRedirect("/AdminPage");
 		}
-		else
-		{
-			List<Sushi> sushis = loaded.getSushis();
-
-		    // envoyer à la JSP
-		    request.setAttribute("listeSushis", sushis);
-
-		    // redirection vers la JSP
-		    RequestDispatcher dispatcher = request.getRequestDispatcher("catalogSushiJSP.jsp");
-		    dispatcher.forward(request, response);
-		}
+		request.setAttribute("listeBoissons", loaded.getBoissons());
+		RequestDispatcher dispatcher = request.getRequestDispatcher("catalogBoisson.jsp");
+		dispatcher.forward(request, response);
 		
-		
-		
-	    
 	}
 
 	/**

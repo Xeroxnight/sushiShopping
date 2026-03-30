@@ -8,23 +8,23 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import metier.AppConfig;
 import metier.GlobalCLass;
-import metier.Sushi;
+import metier.HistoriqueCommande;
 import metier.XMLStorage;
 
 import java.io.IOException;
 import java.util.List;
 
 /**
- * Servlet implementation class Catalogue
+ * Servlet implementation class CatalogueCommande
  */
-@WebServlet("/CatalogueSushi")
-public class CatalogueSushi extends HttpServlet {
+@WebServlet("/CatalogueCommande")
+public class CatalogueCommande extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CatalogueSushi() {
+    public CatalogueCommande() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -35,28 +35,17 @@ public class CatalogueSushi extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String path = AppConfig.getPath();
-		GlobalCLass loaded = XMLStorage.decoder(path);
-	    // récupérer les sushis
-		if(loaded == null)
-		{
-			//loaded = new GlobalCLass();
-			response.sendRedirect("/AdminPage");
-		}
-		else
-		{
-			List<Sushi> sushis = loaded.getSushis();
-
-		    // envoyer à la JSP
-		    request.setAttribute("listeSushis", sushis);
-
-		    // redirection vers la JSP
-		    RequestDispatcher dispatcher = request.getRequestDispatcher("catalogSushiJSP.jsp");
-		    dispatcher.forward(request, response);
-		}
-		
-		
-		
-	    
+        GlobalCLass loaded = XMLStorage.decoder(path);
+        
+        if (loaded == null) {
+            response.sendRedirect("AdminPage");
+        } else {
+            List<HistoriqueCommande> commandes = loaded.getCommandes();
+            request.setAttribute("listeCommandes", commandes);
+            
+            RequestDispatcher dispatcher = request.getRequestDispatcher("catalogCommande.jsp");
+            dispatcher.forward(request, response);
+        }
 	}
 
 	/**

@@ -5,37 +5,32 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import metier.AppConfig;
+import metier.Formule;
+import metier.GlobalCLass;
 
 import java.io.IOException;
 
 /**
- * Servlet implementation class mainPage
+ * Servlet implementation class DeleteFormuleServlet
  */
-public class MainPage extends HttpServlet {
+@WebServlet("/DeleteFormuleServlet")
+public class DeleteFormuleServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
+       
     /**
-     * Default constructor. 
+     * @see HttpServlet#HttpServlet()
      */
-    public MainPage() {
+    public DeleteFormuleServlet() {
+        super();
         // TODO Auto-generated constructor stub
     }
-    
-    
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		System.out.println("salut");
-		/*
-		 * request.setAttribute("liste", gestComm.getListeCommande());                                                
-		 * this.getServletContext().getRequestDispatcher("/WEB-INF/Affiche_liste.jsp" ).include(request, response);
-		 */
 		response.getWriter().append("Served at: ").append(request.getContextPath());
-		
 	}
 
 	/**
@@ -43,18 +38,24 @@ public class MainPage extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		 // Récupérer le nouveau chemin depuis le formulaire
-        String newPath = request.getParameter("xmlPath");
-        newPath =  newPath + "\\bdd.xml";
-        if (newPath != null && !newPath.trim().isEmpty()) {
-            // Modifier le chemin dans AppConfig
-        	AppConfig.setPath(newPath.trim());
-            //AppConfig.setXmlPath(newPath.trim());
-            System.out.println("Chemin XML modifié : " + newPath);
+		try {
+            // récupération de l'id
+            int id = Integer.parseInt(request.getParameter("id"));
+            
+            // Création d'un objet Formule temporaire avec seulement l'id
+            Formule formule = new Formule();
+            formule.setId(id);
+            
+            // Appel à la méthode REST pour supprimer
+            GlobalCLass global = new GlobalCLass();
+            global.deleteFormuleInCatalogRest(formule);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        
-        // Rediriger vers la page admin
-        response.sendRedirect("index.jsp");
+
+        // redirection vers le catalogue des formules
+        response.sendRedirect("CatalogueFormule");
 	}
 
 }

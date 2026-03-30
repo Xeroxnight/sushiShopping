@@ -24,5 +24,11 @@ public class TesteSerialisation
 		GlobalCLass loaded = XMLStorage.decoder("../bdd.xml");
 
 		System.out.println("Nb produits chargés : " + loaded.getCatalogue().size());
+		
+		//AppConfig first = new AppConfig();
+		//first.setXmlPath("C:\\Users\\timeo\\Desktop\\Nouveau dossier\\AdminPage\\src\\main\\webapp\\WEB-INF\\appConfig.xml");
+		//XMLStorage.encoderConfigFile(first, "src/main/webapp/WEB-INF/appConfig.xml");
+		
+		
 	}
 }

@@ -10,11 +10,11 @@ public class Ensemble implements Produit {
     private String description;
     private String image;
 
-    private Map<Sushi, Integer> sushis;
+    private Map<Integer, Integer> sushis;  // ID du sushi -> quantité
 
     public Ensemble() {}
 
-    public Ensemble(int id, String nom, double prix, String description, String image, Map<Sushi, Integer> sushis) {
+    public Ensemble(int id, String nom, double prix, String description, String image, Map<Integer, Integer> sushis) {
         this.id = id;
         this.nom = nom;
         this.prix = prix;
@@ -23,11 +23,11 @@ public class Ensemble implements Produit {
         this.sushis = sushis;
     }
 
-    public Map<Sushi, Integer> getSushis() {
+    public Map<Integer, Integer> getSushis() {
         return sushis;
     }
 
-    public void setSushis(Map<Sushi, Integer> sushis) {
+    public void setSushis(Map<Integer, Integer> sushis) {
         this.sushis = sushis;
     }
 
