@@ -6,25 +6,27 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import metier.AppConfig;
+import metier.Boisson;
+import metier.Ensemble;
+import metier.Formule;
 import metier.GlobalCLass;
-import metier.HistoriqueCommande;
+import metier.Sushi;
 import metier.XMLStorage;
 
 import java.io.IOException;
 import java.util.List;
 
 /**
- * Servlet implementation class CatalogueCommande
+ * Servlet implementation class CatalogueServlet
  */
-@WebServlet("/CatalogueCommande")
-public class CatalogueCommande extends HttpServlet {
+@WebServlet("/catalogue")
+public class CatalogueServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public CatalogueCommande() {
+    public CatalogueServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -34,23 +36,24 @@ public class CatalogueCommande extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		String path = AppConfig.getPath();
+		String path = metier.AppConfig.getPath();
         GlobalCLass loaded = XMLStorage.decoder(path);
         
-        
-        if (loaded == null) {
-            response.sendRedirect("AdminPage");
-        } else {
-            List<HistoriqueCommande> commandes = loaded.getCommandes();
-            System.out.println("=== AFFICHAGE COMMANDES ===");
-            System.out.println("Nombre de commandes trouvées: " + (commandes != null ? commandes.size() : 0));
-            request.setAttribute("listeCommandes", commandes);
-            request.setAttribute("catalogue", loaded.getCatalogue());
+        if (loaded != null) {
+            List<Sushi> sushis = loaded.getSushis();
+            List<Boisson> boissons = loaded.getBoissons();
+            List<Ensemble> ensembles = loaded.getEnsembles();
+            List<Formule> formules = loaded.getFormules();
             
-            RequestDispatcher dispatcher = request.getRequestDispatcher("catalogCommande.jsp");
-            dispatcher.forward(request, response);
+            request.setAttribute("sushis", sushis);
+            request.setAttribute("boissons", boissons);
+            request.setAttribute("ensembles", ensembles);
+            request.setAttribute("formules", formules);
         }
-	}
+        
+        RequestDispatcher dispatcher = request.getRequestDispatcher("catalogue.jsp");
+        dispatcher.forward(request, response);
+    }
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)

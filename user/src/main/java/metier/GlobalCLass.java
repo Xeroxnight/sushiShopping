@@ -1,10 +1,9 @@
 package metier;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
-import org.apache.catalina.User;
 
 import jakarta.inject.Singleton;
 import jakarta.ws.rs.Consumes;
@@ -250,6 +249,136 @@ public class GlobalCLass {
 	     }
 	     XMLStorage.encoder(glob, path);
 	 }
+	 
+	 
+	 
+	 
+	 // ajouter sa dans adminpage(pas obligatoire)
+	// Ajouter un produit au panier de l'utilisateur
+	 @POST
+	 @Path("/panier/ajouter")
+	 @Consumes(MediaType.APPLICATION_JSON)
+	 public void ajouterAuPanier(HistoriqueCommande commande) {
+	     String path = AppConfig.getPath();
+	     GlobalCLass glob = XMLStorage.decoder(path);
+	     
+	     // Récupérer l'utilisateur de la commande
+	     Utilisateur user = commande.getUtilisateur();
+	     if (user != null && glob.getListUtilisateur().containsKey(String.valueOf(user.getId()))) {
+	         Utilisateur utilisateurExistant = glob.getListUtilisateur().get(String.valueOf(user.getId()));
+	         HistoriqueCommande panier = utilisateurExistant.getPanier();
+	         
+	         if (panier == null) {
+	             panier = new HistoriqueCommande();
+	             panier.setUtilisateur(utilisateurExistant);
+	             panier.setStatut(StatutCommande.EN_ATTENTE);
+	             utilisateurExistant.setPanier(panier);
+	         }
+	         
+	         // Ajouter les produits de la commande au panier
+	         if (commande.getSushis() != null) {
+	             if (panier.getSushis() == null) panier.setSushis(new ArrayList<>());
+	             panier.getSushis().addAll(commande.getSushis());
+	         }
+	         
+	         if (commande.getBoissons() != null) {
+	             if (panier.getBoissons() == null) panier.setBoissons(new ArrayList<>());
+	             panier.getBoissons().addAll(commande.getBoissons());
+	         }
+	         
+	         if (commande.getEnsembles() != null) {
+	             if (panier.getEnsembles() == null) panier.setEnsembles(new ArrayList<>());
+	             panier.getEnsembles().addAll(commande.getEnsembles());
+	         }
+	         
+	         if (commande.getFormules() != null) {
+	             if (panier.getFormules() == null) panier.setFormules(new ArrayList<>());
+	             panier.getFormules().addAll(commande.getFormules());
+	         }
+	         
+	         // Recalculer le total
+	         panier.setTotal(panier.calculerTotal(glob));
+	         
+	         // Sauvegarder
+	         XMLStorage.encoder(glob, path);
+	     }
+	 }
+	 
+	// Récupérer une commande par son ID
+	 public HistoriqueCommande getCommandeById(int id) {
+	     return listeCommandes.get(id);
+	 }
+
+	 // Ajouter une commande à l'historique et vider le panier
+	 @POST
+	 @Path("/panier/payer")
+	 @Consumes(MediaType.APPLICATION_JSON)
+	 public void payerPanier(Utilisateur user) {
+	     String path = AppConfig.getPath();
+	     GlobalCLass glob = XMLStorage.decoder(path);
+	     
+	     Utilisateur utilisateurExistant = glob.getListUtilisateur().get(String.valueOf(user.getId()));
+	     HistoriqueCommande panier = utilisateurExistant.getPanier();
+	     
+	     if (panier != null && !estPanierVide(panier)) {
+	         // Générer un ID unique pour la commande
+	         int newId = 1;
+	         for (Integer id : glob.listeCommandes.keySet()) {
+	             if (id >= newId) newId = id + 1;
+	         }
+	         
+	         // Créer une copie de la commande
+	         HistoriqueCommande commande = new HistoriqueCommande();
+	         commande.setIdCommande(newId);
+	         commande.setUtilisateur(utilisateurExistant);
+	         commande.setSushis(panier.getSushis() != null ? new ArrayList<>(panier.getSushis()) : null);
+	         commande.setBoissons(panier.getBoissons() != null ? new ArrayList<>(panier.getBoissons()) : null);
+	         commande.setEnsembles(panier.getEnsembles() != null ? new ArrayList<>(panier.getEnsembles()) : null);
+	         commande.setFormules(panier.getFormules() != null ? new ArrayList<>(panier.getFormules()) : null);
+	         commande.setDateCommande(new Date());
+	         commande.setTotal(panier.getTotal());
+	         commande.setStatut(StatutCommande.EN_ATTENTE);
+	         
+	         // Ajouter à l'historique
+	         glob.listeCommandes.put(newId, commande);
+	         
+	         // Vider le panier
+	         utilisateurExistant.setPanier(new HistoriqueCommande());
+	         utilisateurExistant.getPanier().setUtilisateur(utilisateurExistant);
+	         
+	         
+	      // Avant de sauvegarder
+	         System.out.println("=== PAIEMENT ===");
+	         System.out.println("Nouvelle commande ID: " + newId);
+	         System.out.println("Nombre de commandes avant: " + glob.listeCommandes.size());
+	         glob.listeCommandes.put(newId, commande);
+	         System.out.println("Nombre de commandes après: " + glob.listeCommandes.size());
+	         System.out.println("Sauvegarde dans: " + path);
+	         XMLStorage.encoder(glob, path);
+	         System.out.println("=== PAIEMENT TERMINÉ ===");
+	         
+	         // Sauvegarder
+	         //XMLStorage.encoder(glob, path);
+	     }
+	 }
+
+	 // Vérifier si le panier est vide
+	 private boolean estPanierVide(HistoriqueCommande panier) {
+	     boolean sushiVide = panier.getSushis() == null || panier.getSushis().isEmpty();
+	     boolean boissonsVide = panier.getBoissons() == null || panier.getBoissons().isEmpty();
+	     boolean ensemblesVide = panier.getEnsembles() == null || panier.getEnsembles().isEmpty();
+	     boolean formulesVide = panier.getFormules() == null || panier.getFormules().isEmpty();
+	     return sushiVide && boissonsVide && ensemblesVide && formulesVide;
+	 }
+	 
+	 public HashMap<Integer, HistoriqueCommande> getListeCommandes() {
+		    return listeCommandes;
+		}
+
+		public void setListeCommandes(HashMap<Integer, HistoriqueCommande> listeCommandes) {
+		    this.listeCommandes = listeCommandes;
+		}
+	 
     
     public GlobalCLass() {}
 }

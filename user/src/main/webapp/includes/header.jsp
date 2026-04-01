@@ -12,28 +12,29 @@
         </div>
         
         <nav class="menu">
-            <ul>
-                <li class="dropdown">
-                    <a href="#">Catalogue ▼</a>
-                    <ul class="dropdown-content">
-                        <li><a href="sushi.jsp">Sushi</a></li>
-                        <li><a href="pack.jsp">Pack</a></li>
-                        <li><a href="formule.jsp">Formule</a></li>
-                        <li><a href="dessert.jsp">Dessert</a></li>
-                        <li><a href="boisson.jsp">Boisson</a></li>
-                    </ul>
-                </li>
+    <ul>
+        <li><a href="catalogue">Catalogue</a></li>
+        <li class="dropdown">
+            <a href="#">Catégories ▼</a>
+            <ul class="dropdown-content">
+                <li><a href="catalogue#sushis">Sushis</a></li>
+                <li><a href="catalogue#boissons">Boissons</a></li>
+                <li><a href="catalogue#ensembles">Ensembles</a></li>
+                <li><a href="catalogue#formules">Formules</a></li>
             </ul>
-        </nav>
+        </li>
+    </ul>
+</nav>
         
         <div class="auth-section">
-            <% if (userConnecte != null) { %>
-                <span class="user-name">👤 <%= userConnecte.getNom() %></span>
-                <a href="logout" class="btn-deco">Déconnexion</a>
-            <% } else { %>
-                <a href="login.jsp" class="btn-connexion">Connexion</a>
-                <a href="inscription.jsp" class="btn-inscription">Inscription</a>
-            <% } %>
-        </div>
+    <% if (userConnecte != null) { %>
+        <a href="panier" class="btn-panier">🛒 Panier</a>
+        <span class="user-name">👤 <%= userConnecte.getNom() %></span>
+        <a href="logout" class="btn-deco">Déconnexion</a>
+    <% } else { %>
+        <a href="login.jsp" class="btn-connexion">Connexion</a>
+        <a href="inscription.jsp" class="btn-inscription">Inscription</a>
+    <% } %>
+</div>
     </div>
 </header>
