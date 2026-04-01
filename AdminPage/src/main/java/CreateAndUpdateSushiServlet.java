@@ -41,24 +41,39 @@ public class CreateAndUpdateSushiServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        try {
-            // récupération données
+		try {
+            String action = request.getParameter("action");
+            
+            // récupération des données
             int id = Integer.parseInt(request.getParameter("id"));
             String nom = request.getParameter("nom");
             double prix = Double.parseDouble(request.getParameter("prix"));
-            GlobalCLass global = new GlobalCLass();
-            Sushi s = new Sushi();
-            s.setId(id);
-            s.setNom(nom);
-            s.setPrix(prix);
-            global.putInCatalogRest(s);
+            String image = request.getParameter("image");
             
-
+            Sushi sushi = new Sushi();
+            sushi.setId(id);
+            sushi.setNom(nom);
+            sushi.setPrix(prix);
+            sushi.setImage(image != null ? image : "");
+            
+            GlobalCLass global = new GlobalCLass();
+            
+            // Si c'est une modification et que l'ID a changé, supprimer l'ancien
+            if ("update".equals(action)) {
+                String originalId = request.getParameter("originalId");
+                if (originalId != null && !originalId.equals(String.valueOf(id))) {
+                    Sushi oldSushi = new Sushi();
+                    oldSushi.setId(Integer.parseInt(originalId));
+                    global.deleteInCatalog(oldSushi);
+                }
+            }
+            
+            global.putInCatalogRest(sushi);
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // redirection vers catalogue
         response.sendRedirect("CatalogueSushi");
     }
 

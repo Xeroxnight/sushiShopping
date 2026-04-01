@@ -40,6 +40,8 @@ public class CreateAndUpdateBoissonServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		//doGet(request, response);
 		try {
+            String action = request.getParameter("action");
+            
             // récupération des données
             int id = Integer.parseInt(request.getParameter("id"));
             String nom = request.getParameter("nom");
@@ -47,23 +49,31 @@ public class CreateAndUpdateBoissonServlet extends HttpServlet {
             String description = request.getParameter("description");
             String image = request.getParameter("image");
             
-            // Création de l'objet Boisson
-            Boisson b = new Boisson();
-            b.setId(id);
-            b.setNom(nom);
-            b.setPrix(prix);
-            b.setDescription(description);
-            b.setImage(image);
+            Boisson boisson = new Boisson();
+            boisson.setId(id);
+            boisson.setNom(nom);
+            boisson.setPrix(prix);
+            boisson.setDescription(description != null ? description : "");
+            boisson.setImage(image != null ? image : "");
             
-            // Appel à la méthode REST pour sauvegarder
-            GlobalCLass global = new GlobalCLass(); 
-            global.putBoissonInCatalogRest(b);
+            GlobalCLass global = new GlobalCLass();
+            
+            // Si c'est une modification et que l'ID a changé, supprimer l'ancien
+            if ("update".equals(action)) {
+                String originalId = request.getParameter("originalId");
+                if (originalId != null && !originalId.equals(String.valueOf(id))) {
+                    Boisson oldBoisson = new Boisson();
+                    oldBoisson.setId(Integer.parseInt(originalId));
+                    global.deleteBoissonInCatalogRest(oldBoisson);
+                }
+            }
+            
+            global.putBoissonInCatalogRest(boisson);
             
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // redirection vers le catalogue des boissons
         response.sendRedirect("CatalogueBoisson");
     }
 	
