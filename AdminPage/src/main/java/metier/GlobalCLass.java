@@ -1,6 +1,9 @@
 package metier;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +23,7 @@ public class GlobalCLass {
     private HashMap<String, Utilisateur> listUtilisateur = new HashMap<>();
     private HashMap<Integer, Produit> catalogue = new HashMap<>();
     private HashMap<Integer, HistoriqueCommande> listeCommandes = new HashMap<>();
+    private HashMap<Integer, Reservation> listeReservations = new HashMap<>();
 
     public HashMap<String, Utilisateur> getListUtilisateur() {
         return listUtilisateur;
@@ -371,6 +375,9 @@ public class GlobalCLass {
 	     return sushiVide && boissonsVide && ensemblesVide && formulesVide;
 	 }
 	 
+	 
+	 
+	 
 	 public HashMap<Integer, HistoriqueCommande> getListeCommandes() {
 		    return listeCommandes;
 		}
@@ -379,7 +386,153 @@ public class GlobalCLass {
 		    this.listeCommandes = listeCommandes;
 		}
 	 
-    
+		
+		
+
+		public HashMap<Integer, Reservation> getListeReservations() {
+		    return listeReservations;
+		}
+
+		public void setListeReservations(HashMap<Integer, Reservation> listeReservations) {
+		    this.listeReservations = listeReservations;
+		}
+
+		public List<Reservation> getReservations() {
+		    List<Reservation> res = new ArrayList<>();
+		    if (listeReservations != null) {
+		        for (Reservation r : listeReservations.values()) {
+		            res.add(r);
+		        }
+		    }
+		    //System.out.println("=== GlobalClass.getReservations() = " + res.size());
+		    return res;
+		}
+		
+		// Nettoie les réservations invalides (date ou heure null)
+		public void nettoyerReservationsInvalides() {
+		    List<Integer> idsASupprimer = new ArrayList<>();
+		    
+		    for (Reservation r : listeReservations.values()) {
+		        if (r.getDate() == null || r.getHeure() == null) {
+		            idsASupprimer.add(r.getId());
+		            System.out.println("Réservation invalide trouvée - ID: " + r.getId() + ", à supprimer");
+		        }
+		    }
+		    
+		    for (Integer id : idsASupprimer) {
+		        listeReservations.remove(id);
+		    }
+		    
+		    if (!idsASupprimer.isEmpty()) {
+		        System.out.println(idsASupprimer.size() + " réservation(s) invalide(s) supprimée(s)");
+		        // Sauvegarder après nettoyage
+		        String path = AppConfig.getPath();
+		        XMLStorage.encoder(this, path);
+		    }
+		}
+		
+		
+		public boolean isTableDisponible(Date date, Date heure, int tableNumero) {
+		    // Nettoyer les réservations invalides avant de vérifier
+		    nettoyerReservationsInvalides();
+		    
+		    Calendar cal1 = Calendar.getInstance();
+		    Calendar cal2 = Calendar.getInstance();
+		    
+		    for (Reservation r : listeReservations.values()) {
+		        if (r.getDate() == null || r.getHeure() == null) {
+		            continue; // sécurité supplémentaire
+		        }
+		        
+		        if (r.getDate().equals(date)) {
+		            cal1.setTime(r.getHeure());
+		            cal2.setTime(heure);
+		            int heureRes = cal1.get(Calendar.HOUR_OF_DAY);
+		            int heureChoisie = cal2.get(Calendar.HOUR_OF_DAY);
+		            
+		            if (Math.abs(heureRes - heureChoisie) <= 1 && 
+		                r.getTableNumero() == tableNumero &&
+		                r.getStatut() != StatutReservation.ANNULEE) {
+		                return false;
+		            }
+		        }
+		    }
+		    return true;
+		}
+		
+		// Valider une réservation et vider le panier
+		public void validerReservationEtPayer(Reservation reservation, Utilisateur user) {
+		    String path = AppConfig.getPath();
+		    GlobalCLass glob = XMLStorage.decoder(path);
+		    
+		    Utilisateur utilisateurExistant = glob.getListUtilisateur().get(String.valueOf(user.getId()));
+		    
+		    // 1. Ajouter la réservation
+		    int newId = 1;
+		    for (Integer id : glob.listeReservations.keySet()) {
+		        if (id >= newId) newId = id + 1;
+		    }
+		    reservation.setId(newId);
+		    reservation.setIdUtilisateur(user.getId());
+		    reservation.setStatut(StatutReservation.CONFIRMEE);
+		    glob.listeReservations.put(newId, reservation);
+		    
+		    // 2. Récupérer le panier
+		    HistoriqueCommande panier = utilisateurExistant.getPanier();
+		    
+		    if (panier != null && !estPanierVide(panier)) {
+		        // 3. Générer un ID pour la commande
+		        int newIdCommande = 1;
+		        for (Integer id : glob.listeCommandes.keySet()) {
+		            if (id >= newIdCommande) newIdCommande = id + 1;
+		        }
+		        
+		        // 4. Créer une copie de la commande
+		        HistoriqueCommande commande = new HistoriqueCommande();
+		        commande.setIdCommande(newIdCommande);
+		        commande.setUtilisateur(utilisateurExistant);
+		        commande.setSushis(panier.getSushis());
+		        commande.setBoissons(panier.getBoissons());
+		        commande.setEnsembles(panier.getEnsembles());
+		        commande.setFormules(panier.getFormules());
+		        commande.setDateCommande(new Date());
+		        commande.setTotal(panier.getTotal());
+		        commande.setStatut(StatutCommande.EN_ATTENTE);
+		        
+		        // 5. Ajouter à l'historique
+		        glob.listeCommandes.put(newIdCommande, commande);
+		        
+		        // 6. Vider le panier
+		        utilisateurExistant.setPanier(new HistoriqueCommande());
+		        utilisateurExistant.getPanier().setUtilisateur(utilisateurExistant);
+		    }
+		    
+		    // 7. Sauvegarder
+		    XMLStorage.encoder(glob, path);
+		}
+		
+		@POST
+		@Path("/reservation/valider")
+		@Consumes(MediaType.APPLICATION_JSON)
+		public void validerReservationRest(ReservationDTO reservationDTO) {
+		    String path = AppConfig.getPath();
+		    GlobalCLass glob = XMLStorage.decoder(path);
+		    
+		    // Convertir DTO en Reservation
+		    Reservation reservation = new Reservation();
+		    reservation.setIdUtilisateur(reservationDTO.getIdUtilisateur());
+		    reservation.setDate(reservationDTO.getDate()); // String vers Date via la surcharge
+		    reservation.setHeure(reservationDTO.getHeure());
+		    reservation.setTableNumero(reservationDTO.getTableNumero());
+		    reservation.setNbPersonnes(reservationDTO.getNbPersonnes());
+		    reservation.setStatut(reservationDTO.getStatut());
+		    
+		    Utilisateur user = glob.getListUtilisateur().get(String.valueOf(reservationDTO.getIdUtilisateur()));
+		    if (user != null) {
+		        validerReservationEtPayer(reservation, user);
+		    }
+		}
+		
     public GlobalCLass() {}
 }
 

@@ -26,7 +26,7 @@ public class XMLStorage {
 
             encoder.writeObject(data);
 
-            System.out.println("Catalogue sauvegardé dans : " + chemin);
+            //System.out.println("Catalogue sauvegardé dans : " + chemin);
 
         } catch (Exception e) {
             System.out.println("Impossible d'écrire le fichier XML");
@@ -72,7 +72,7 @@ public class XMLStorage {
 
             encoder.writeObject(data);
 
-            System.out.println("Catalogue sauvegardé dans : " + chemin);
+            //System.out.println("Catalogue sauvegardé dans : " + chemin);
 
         } catch (Exception e) {
             System.out.println("Impossible d'écrire le fichier XML");

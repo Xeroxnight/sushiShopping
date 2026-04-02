@@ -116,6 +116,20 @@
             font-size: 10px;
             margin-left: 10px;
         }
+        
+        .btn-reserver {
+		    background: #3498db;
+		    color: white;
+		    border: none;
+		    padding: 12px 25px;
+		    border-radius: 5px;
+		    cursor: pointer;
+		    font-size: 16px;
+		}
+		
+		.btn-reserver:hover {
+		    background: #2980b9;
+		}
     </style>
 </head>
 <body>
@@ -262,10 +276,19 @@
         <div class="total">
             Total : <%= String.format("%.2f", total) %> €
         </div>
-        
+        <div style="display: flex; gap: 15px; justify-content: flex-end; margin-top: 20px;">
+		    <form action="payer" method="post" style="display: inline;">
+		        <button type="submit" class="btn-payer">💰 Payer en commande</button>
+		    </form>
+		    <form action="reservation" method="get" style="display: inline;">
+			    <button type="submit" class="btn-payer">Réserver une table</button>
+			</form>
+		</div>
+        <!--  
         <form action="payer" method="post" style="text-align: right;">
             <button type="submit" class="btn-payer">💳 Valider la commande</button>
         </form>
+        -->
     <% } %>
 </div>
 
