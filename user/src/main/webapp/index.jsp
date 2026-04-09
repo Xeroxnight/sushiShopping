@@ -162,12 +162,16 @@
 
     <jsp:include page="includes/footer.jsp" />
     
-    <form action="MainPage" method="post">
-            <label for="xmlPath">Nouveau chemin du fichier XML :</label>
-            <input type="text" id="xmlPath" name="xmlPath" placeholder="C:/chemin/vers/bdd.xml" required>
-            
-            <button type="submit" class="btn btn-small">Modifier le chemin</button>
-        </form>
+    <div class="config-bar">
+	    <div class="config-current">
+	        📁 Chemin actuel : <%= metier.AppConfig.getPath() %>
+	    </div>
+	    <form action="MainPage" method="post" class="config-form">
+	        <label for="xmlPath">Modifier :</label>
+	        <input type="text" id="xmlPath" name="xmlPath" placeholder="C:/chemin/vers/bdd.xml" required>
+	        <button type="submit" class="btn-config">OK</button>
+	    </form>
+	</div>
 
     <script>
         function accepterCookies() {
