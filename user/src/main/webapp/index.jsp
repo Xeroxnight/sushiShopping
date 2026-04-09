@@ -161,6 +161,13 @@
     <jsp:include page="includes/cookies.jsp" />
 
     <jsp:include page="includes/footer.jsp" />
+    
+    <form action="MainPage" method="post">
+            <label for="xmlPath">Nouveau chemin du fichier XML :</label>
+            <input type="text" id="xmlPath" name="xmlPath" placeholder="C:/chemin/vers/bdd.xml" required>
+            
+            <button type="submit" class="btn btn-small">Modifier le chemin</button>
+        </form>
 
     <script>
         function accepterCookies() {
